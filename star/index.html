@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>4wxsee</title>
+<title>u gey?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -67,8 +67,28 @@ html, body {
   align-items: center;
 }
 
-.card {
+.card-wrap {
+  position: relative;
   width: min(380px, 92vw);
+}
+
+.card-sit-gif {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 18px);
+  transform: translateX(-50%);
+  width: min(170px, 44vw);
+  max-height: 200px;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 5;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.55));
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
   padding: 34px 42px;
   border-radius: 22px;
   background: rgba(12, 12, 18, 0.42);
@@ -293,15 +313,17 @@ html, body {
 <body>
 
 <div id="enter-screen" aria-label="Click to enter">
-  <img class="enter-logo" id="enter-logo" src="../../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DELUCA" />
-  <div class="enter-text">CLICK ME <3 </div>
+  <img class="enter-logo" id="enter-logo" src="../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DELUCA" />
+  <div class="enter-text"> starlovesyou </div>
 </div>
 
 <div class="background" id="background"></div>
 <div class="overlay"></div>
 
 <div class="content">
-  <div class="card">
+  <div class="card-wrap">
+    <img class="card-sit-gif" id="sit-gif" src="../gif/star-sit.gif" alt="" />
+    <div class="card">
     <div class="profile">
       <div class="avatar-wrap">
         <img class="avatar" id="avatar" src="" alt="Avatar" />
@@ -310,11 +332,11 @@ html, body {
       </div>
 
       <div class="profile-name">
-        <span id="display-name">WXSEE</span>
+        <span id="display-name">STAR</span>
         <span class="badge" id="badge">⭐</span>
       </div>
 
-      <p class="custom-status" id="custom-status">KUMAKANTOT NG PWD</p>
+      <p class="custom-status" id="custom-status">1and0nly⭐</p>
 
       <nav class="social-links" id="social-links" aria-label="Social media links"></nav>
 
@@ -323,31 +345,30 @@ html, body {
         <span id="view-count">0</span>
       </div>
     </div>
+    </div>
   </div>
 </div>
 
 <audio id="bgMusic" loop preload="auto"></audio>
 
-<script src="../../js/discord-status-client.js"></script>
+<script src="../js/discord-status-client.js"></script>
 <script>
 /* ── Edit your profile here ── */
 const CONFIG = {
-  displayName: "WXSEE",
-  customStatus: "KUMAKANTOT NG PWD",
-  badge: "⭐",
+  displayName: "STAR",
+  customStatus: "1and0nly⭐",
+  badge: "<𝟑 .ᐟ",
   avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
   
-  discordUserId: "1304596961973768295",
-  backgroundGif: "https://i.pinimg.com/originals/9c/2b/f0/9c2bf02bb108e9658b6d07c2a15ede6e.gif",
+  discordUserId: "1385698537614086227",
+  backgroundGif: "../gif/star.gif",
+  sittingGif: "../gif/star-sit.gif",
   social: {
     discord: "", /* filled from discordUserId */
-    tiktok: "https://tiktok.com/@YOUR_USERNAME",
-    youtube: "https://youtube.com/@Wxseechii",
-    //twitch: "https://twitch.tv/",
-    //instagram: "https://instagram.com/"
+    tiktok: "https://tiktok.com/@theycallmesmook3y"
   },
-  backgroundMusic: "../../music/wxsee.mp3",
-  musicVolume: 0.7
+  backgroundMusic: "../music/star.mp3",
+  musicVolume: 0.9
 };
 
 const ICONS = {
@@ -364,7 +385,20 @@ function setupBackground() {
   const img = document.createElement("img");
   img.src = CONFIG.backgroundGif;
   img.alt = "";
+  img.onerror = () => {
+    console.error("Background GIF not found:", CONFIG.backgroundGif);
+  };
   bg.appendChild(img);
+}
+
+function setupSittingGif() {
+  const sit = document.getElementById("sit-gif");
+  if (!sit || !CONFIG.sittingGif) return;
+  sit.src = CONFIG.sittingGif;
+  sit.onerror = () => {
+    sit.style.display = "none";
+    console.error("Sitting GIF not found:", CONFIG.sittingGif);
+  };
 }
 
 function setupSocial() {
@@ -525,8 +559,8 @@ async function loadDiscord() {
   }
 }
 
-const views = parseInt(localStorage.getItem("wxsee_views") || "265", 10) + 1;
-localStorage.setItem("wxsee_views", views);
+const views = parseInt(localStorage.getItem("star_views") || "0", 10) + 1;
+localStorage.setItem("star_views", views);
 document.getElementById("view-count").textContent = views;
 
 const bgMusic = document.getElementById("bgMusic");
@@ -554,6 +588,7 @@ enterScreen.addEventListener("click", () => {
 
 applyProfile();
 setupBackground();
+setupSittingGif();
 setupSocial();
 loadDiscord();
 setInterval(function () { loadDiscord().catch(function () {}); }, 15000);

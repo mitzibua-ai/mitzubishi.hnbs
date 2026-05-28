@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>smky.rawr</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='64'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3CradialGradient%20id='core'%20cx='50%25'%20cy='50%25'%20r='65%25'%3E%3Cstop%20offset='0%25'%20stop-color='%23ffffff'/%3E%3Cstop%20offset='18%25'%20stop-color='%23ff00ff'/%3E%3Cstop%20offset='45%25'%20stop-color='%2300ffff'/%3E%3Cstop%20offset='72%25'%20stop-color='%23ffff00'/%3E%3Cstop%20offset='100%25'%20stop-color='%23000000'%20stop-opacity='0.08'/%3E%3C/radialGradient%3E%3ClinearGradient%20id='ring'%20x1='0%25'%20y1='0%25'%20x2='100%25'%20y2='0%25'%3E%3Cstop%20offset='0%25'%20stop-color='%23ff0000'/%3E%3Cstop%20offset='17%25'%20stop-color='%23ff00ff'/%3E%3Cstop%20offset='34%25'%20stop-color='%230000ff'/%3E%3Cstop%20offset='50%25'%20stop-color='%2300ffff'/%3E%3Cstop%20offset='67%25'%20stop-color='%2300ff00'/%3E%3Cstop%20offset='84%25'%20stop-color='%23ffff00'/%3E%3Cstop%20offset='100%25'%20stop-color='%23ff0000'/%3E%3C/linearGradient%3E%3Cfilter%20id='glow'%20x='-40%25'%20y='-40%25'%20width='180%25'%20height='180%25'%3E%3CfeGaussianBlur%20in='SourceGraphic'%20stdDeviation='2.2'%20result='b'/%3E%3CfeColorMatrix%20in='b'%20type='matrix'%20values='1.6%200%200%200%200%200%201.6%200%200%200%200%200%201.6%200%200%200%200%200%201%200'%20result='c'/%3E%3CfeMerge%3E%3CfeMergeNode%20in='c'/%3E%3CfeMergeNode%20in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Ccircle%20cx='32'%20cy='32'%20r='25'%20fill='url(%23core)'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='28'%20fill='none'%20stroke='url(%23ring)'%20stroke-width='5'%20filter='url(%23glow)'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='29'%20fill='none'%20stroke='%23ffffff'%20stroke-opacity='0.18'%20stroke-width='1'/%3E%3C/svg%3E" />
+<title>gabo.mp7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,29 +57,6 @@ html, body {
   pointer-events: none;
 }
 
-.corner-logo {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 6;
-  width: min(320px, 55vw);
-  height: auto;
-  opacity: 0.95;
-  user-select: none;
-  -webkit-user-drag: none;
-  transform: rotate(-3deg);
-  transform-origin: left top;
-  filter:
-    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.65))
-    drop-shadow(0 0 18px rgba(255, 255, 255, 0.08));
-}
-
-.corner-logo:hover { transform: rotate(-1.5deg); }
-
-.corner-logo.hidden {
-  display: none;
-}
-
 .content {
   position: relative;
   z-index: 2;
@@ -91,28 +67,8 @@ html, body {
   align-items: center;
 }
 
-.card-wrap {
-  position: relative;
-  width: min(380px, 92vw);
-}
-
-.card-sit-gif {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% - 18px);
-  transform: translateX(-50%);
-  width: min(170px, 44vw);
-  max-height: 200px;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 5;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.55));
-}
-
 .card {
-  position: relative;
-  z-index: 2;
-  width: 100%;
+  width: min(380px, 92vw);
   padding: 34px 42px;
   border-radius: 22px;
   background: rgba(12, 12, 18, 0.42);
@@ -120,50 +76,6 @@ html, body {
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
-}
-
-/* Neon border glow */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #ff2bd6, #7c3aed, #00e5ff, #ff2bd6);
-  background-size: 300% 100%;
-  padding: 2px; /* border thickness */
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0.95;
-  z-index: 1;
-  pointer-events: none;
-  animation: neonShift 5s linear infinite;
-}
-
-.card::after {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-    0 0 16px rgba(0, 229, 255, 0.22),
-    0 0 34px rgba(255, 43, 214, 0.18);
-  opacity: 0.75;
-  z-index: 0;
-  animation: neonPulse 2.8s ease-in-out infinite;
-}
-
-@keyframes neonShift {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-
-@keyframes neonPulse {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.8; }
 }
 
 .profile {
@@ -381,20 +293,15 @@ html, body {
 <body>
 
 <div id="enter-screen" aria-label="Click to enter">
-  <img class="enter-logo" id="enter-logo" src="../../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DELUCA" />
-  <div class="enter-text"> c====3 </div>
+  <img class="enter-logo" id="enter-logo" src="../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DELUCA" />
+  <div class="enter-text"> click to enter. </div>
 </div>
 
 <div class="background" id="background"></div>
 <div class="overlay"></div>
 
-<!-- Top-left logo -->
-<img class="corner-logo" id="corner-logo" src="../../logo/smookeylogo.png" alt="SMOOK3Y" />
-
 <div class="content">
-  <div class="card-wrap">
-    <img class="card-sit-gif" id="sit-gif" src="../../gif/star-sit.gif" alt="" />
-    <div class="card">
+  <div class="card">
     <div class="profile">
       <div class="avatar-wrap">
         <img class="avatar" id="avatar" src="" alt="Avatar" />
@@ -403,11 +310,11 @@ html, body {
       </div>
 
       <div class="profile-name">
-        <span id="display-name">$m00k3y</span>
-        <span class="badge" id="badge">🚬</span>
+        <span id="display-name">HASHLUVSYU</span>
+        <span class="badge" id="badge">⭐</span>
       </div>
 
-      <p class="custom-status" id="custom-status">What's up, my pards</p>
+      <p class="custom-status" id="custom-status">DIDAY</p>
 
       <nav class="social-links" id="social-links" aria-label="Social media links"></nav>
 
@@ -416,43 +323,28 @@ html, body {
         <span id="view-count">0</span>
       </div>
     </div>
-    </div>
   </div>
 </div>
 
 <audio id="bgMusic" loop preload="auto"></audio>
 
-<script src="../../js/discord-status-client.js"></script>
+<script src="../js/discord-status-client.js"></script>
 <script>
-// Logo fallback (in case extension differs)
-(function () {
-  var img = document.getElementById("corner-logo");
-  if (!img) return;
-  var base = "../../logo/smookeylogo";
-  var exts = ["png", "webp", "jpg", "jpeg", "gif"];
-  var i = 0;
-  img.onerror = function () {
-    i++;
-    if (i >= exts.length) return;
-    img.src = base + "." + exts[i];
-  };
-})();
-
 /* ── Edit your profile here ── */
 const CONFIG = {
-  displayName: "$m00k3y",
-  customStatus: "What's up, my pards?",
-  badge: "🚬",
+  displayName: "HASHLUVSYU",
+  customStatus: "DIDAY",
+  badge: "⭐",
   avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
   
-  discordUserId: "1284140942764539985",
-  backgroundGif: "../../gif/smookey.gif",
-  sittingGif: "../../gif/star-sit.gif",
+  discordUserId: "946783074488836106",
+  backgroundGif: "../gif/gabo.gif",
   social: {
     discord: "", /* filled from discordUserId */
-    tiktok: "https://tiktok.com/@theycallmesmook3y"
+    //tiktok: "https://tiktok.com/@theycallmesmook3y",
+    youtube: "https://youtube.com/@gab000-e8v"
   },
-  backgroundMusic: "../../music/smookey.mp3",
+  backgroundMusic: "../music/gabo.mp3",
   musicVolume: 0.9
 };
 
@@ -474,16 +366,6 @@ function setupBackground() {
     console.error("Background GIF not found:", CONFIG.backgroundGif);
   };
   bg.appendChild(img);
-}
-
-function setupSittingGif() {
-  const sit = document.getElementById("sit-gif");
-  if (!sit || !CONFIG.sittingGif) return;
-  sit.src = CONFIG.sittingGif;
-  sit.onerror = () => {
-    sit.style.display = "none";
-    console.error("Sitting GIF not found:", CONFIG.sittingGif);
-  };
 }
 
 function setupSocial() {
@@ -673,7 +555,6 @@ enterScreen.addEventListener("click", () => {
 
 applyProfile();
 setupBackground();
-setupSittingGif();
 setupSocial();
 loadDiscord();
 setInterval(function () { loadDiscord().catch(function () {}); }, 15000);
