@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeLuca.wrld</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+audio {
+    display: none;
+}
+
+.gif-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../gif/main.gif') center center/cover no-repeat;
+    opacity: 0.2;
+    z-index: -2;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+}
+
+#enter-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+#enter-screen .logo {
+    width: 650px;
+    max-width: 85%;
+    margin-bottom: 50px;
+}
+
+.enter-text {
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.page {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero .logo {
+    width: 680px;
+    max-width: 90%;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.35));
+}
+
+@keyframes float {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.text {
+    color: rgb(189, 11, 11);
+    font-size: 40px;
+    font-family: Arial, Helvetica, sans-serif, sans-serif;
+    text-shadow: 0 0 10px rgba(231, 0, 0, 0.8);
+    -webkit-text-stroke: #d1d1d1 0.8px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.cards-section {
+    flex-direction: column;
+    padding: 60px 20px 80px;
+    min-height: auto;
+}
+
+.cards-wrapper {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.cards-grid.xclsv-grid {
+    max-width: 1100px;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+@media (max-width: 900px) {
+    .cards-grid.xclsv-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cards-grid.xclsv-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .cards-grid:not(.xclsv-grid) {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+    }
+
+    .cards-grid.xclsv-grid {
+        max-width: 100%;
+    }
+}
+
+.card {
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: rgba(20, 20, 20, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 28px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card-avatar-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+}
+
+.card-avatar {
+    position: relative;
+    z-index: 1;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    display: block;
+}
+
+.card-avatar-decoration {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+    display: none;
+}
+
+.card-avatar-decoration.visible {
+    display: block;
+}
+
+.status-dot {
+    z-index: 3;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 4px solid rgba(20, 20, 20, 0.85);
+    background: #80848e;
+}
+
+.status-dot.online  { background: #23a559; }
+.status-dot.idle    { background: #f0b232; }
+.status-dot.dnd     { background: #f23f43; }
+.status-dot.offline  { background: #80848e; }
+
+.card-name {
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #f2f3f5;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.card-status {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #b5bac1;
+    text-align: center;
+    max-width: 210px;
+    line-height: 1.35;
+    word-break: break-word;
+    min-height: 1.2em;
+}
+
+.card-status .status-emoji {
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    margin-right: 2px;
+}
+
+.card-status.empty {
+    display: none;
+}
+
+.card.loading .card-name,
+.card.loading .card-status {
+    color: transparent;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+}
+
+.card.loading .card-name {
+    min-width: 80px;
+    min-height: 1.1em;
+}
+
+.card.loading .card-status {
+    min-width: 120px;
+    min-height: 0.9em;
+}
+
+.ascii-art {
+    color: #888;
+    font-family: monospace;
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: pre;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.spacer {
+    min-height: 40vh;
+}
+
+/* ========== FOOTER: YOU'RE ONE OF US + DISCORD LINK ========== */
+
+.page-footer {
+    min-height: 70vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 60px 20px 120px;
+    position: relative;
+    z-index: 1;
+}
+
+.one-of-us-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    gap: 24px;
+}
+
+.one-of-us-heading {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    font-size: clamp(1.6rem, 5.5vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.one-of-us-heading .stroke,
+.one-of-us-heading .fill {
+    display: block;
+    white-space: nowrap;
+}
+
+.one-of-us-heading .stroke {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    color: transparent;
+    -webkit-text-stroke: 4px transparent;
+    background: linear-gradient(
+        90deg,
+        #ff0044,
+        #ff7b00,
+        #ffd500,
+        #00e05a,
+        #0099ff,
+        #a855f7,
+        #ff0044
+    );
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: rainbow-stroke-slow 18s linear infinite;
+    pointer-events: none;
+}
+
+.one-of-us-heading .fill {
+    position: relative;
+    color: rgb(120, 8, 8);
+    text-shadow: 0 0 10px rgba(139, 0, 0, 0.65);
+}
+
+@keyframes rainbow-stroke-slow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
+}
+
+.one-of-us-link {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    color: #d1d1d1;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.one-of-us-link:hover {
+    color: #fff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 520px) {
+    .one-of-us-heading .stroke,
+    .one-of-us-heading .fill {
+        white-space: normal;
+    }
+}
+
+/* ========== MINI PROFILE (BOTTOM-RIGHT) ========== */
+.mini-profile {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+    z-index: 2;
+    width: 190px;
+    min-height: 160px;
+    max-width: calc(100vw - 44px);
+    text-decoration: none;
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    padding: 18px 16px 16px;
+    border-radius: 18px;
+    background: rgba(255, 0, 0, 0.089);
+    border: 1px solid rgba(255, 0, 0, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.0s ease;
+}
+
+.mini-profile:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 16px 55px rgba(0, 0, 0, 0.65);
+}
+
+.mini-profile .card-avatar-wrap {
+    width: 92px;
+    height: 92px;
+}
+
+.mini-profile .card-avatar {
+    width: 92px;
+    height: 92px;
+    border-width: 2px;
+}
+
+.mini-profile .card-avatar-decoration {
+    width: 122%;
+    height: 122%;
+}
+
+.mini-profile .status-dot {
+    width: 18px;
+    height: 18px;
+    border-width: 4px;
+}
+
+.mini-profile .card-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.mini-profile .card-status {
+    display: none;
+}
+
+.mini-profile.loading .card-name {
+    color: transparent;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    min-width: 90px;
+    min-height: 1.1em;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop preload="auto" src="../music/triplang3mix.mp3"></audio><volume id="bgVolume" value="0.9"></volume>
+
+
+<div id="enter-screen">
+    <img src="../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" class="logo" alt="DeLuca logo">
+    <div class="enter-text">CLICK MO TO NIGGA!</div>
+</div>
+
+<div class="gif-bg"></div>
+<div class="overlay"></div>
+
+<section class="page hero">
+    <img src="../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DeLuca logo" class="logo">
+</section>
+
+<section class="page cards-section">
+    <div class="cards-wrapper">
+        <div class="text">ULO NG DELUCA</div>
+        <div class="cards-grid" id="cards-grid-1"></div>
+    </div>
+</section>
+
+<section class="page cards-section">
+    <div class="cards-wrapper">
+        <div class="text">XCLSV</div>
+        <div class="cards-grid xclsv-grid" id="cards-grid-2"></div>
+    </div>
+</section>
+
+<section class="page spacer"></section>
+
+<footer class="page-footer">
+    <div class="one-of-us-block">
+        <h2 class="one-of-us-heading">
+            <span class="stroke" aria-hidden="true">YOU'RE ONE OF US</span>
+            <span class="fill">YOU'RE ONE OF US</span>
+        </h2>
+        <a
+            href="https://discord.gg/z3mRUf9VMV"
+            class="one-of-us-link"
+            id="one-of-us-link"
+            target="_blank"
+            rel="noopener noreferrer"
+        >.gg/DeLuca</a>
+    </div>
+
+    <!-- Mini profile card (1 only). Update data-discord-id/href if needed. -->
+    <a
+        href="file:///C:/Users/Administrator/Desktop/websitedeluca/ulo%20ng%20deluca/smookey/smookey.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mini-profile"
+    >
+    </a>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="../js/discord-status-client.js"></script>
+<script>
+
+// ============================================================
+const ULO_NG_DELUCA_MEMBERS = [
+    {
+        id: "1304596961973768295",
+        link: "../ulo ng deluca/wxsee/wxsee.html"
+    },
+    {
+        id: "1385698537614086227",
+        link: "../ulo ng deluca/star/star.html"
+    }
+];
+
+// =================================================================
+const XCLSV_MEMBERS = [
+     { id: "946783074488836106", link: "../xclsv/gabo/gabo.html" },
+     { id: "1382434087226179656", link: "../xclsv/danje/danje.html" },
+     { id: "1073616531734409227", link: "../xclsv/quatro/quatro.html" },
+     { id: "1321880483352674405", link: "../xclsv/ryu/ryu.html" },
+     { id: "1258445965723959317", link: "../xclsv/clark/clark.html" },
+     { id: "1111609560512348240", link: "../xclsv/haynz/haynz.html" },
+     { id: "1288512877094895713", link: "../xclsv/chozen/chozen.html" },
+     { id: "1401121254525898763", link: "../xclsv/onse/onse.html" },
+     { id: "1485523311684354148", link: "../xclsv/jay/jay.html" },
+     { id: "803232959116083260", link: "../xclsv/james/james.html" }
+];
+// ============================================================
+
+const ASSETS = {
+    logo: "../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png",
+    music: "../music/triplang3mix.mp3"
+};
+
+// Discord invite (footer link) — change this URL if your invite changes
+const DISCORD_LINK = "https://discord.gg/z3mRUf9VMV";
+
+const enterScreen = document.getElementById("enter-screen");
+const music = document.getElementById("bgMusic");
+const oneOfUsLink = document.getElementById("one-of-us-link");
+
+if (oneOfUsLink && DISCORD_LINK) {
+    oneOfUsLink.href = DISCORD_LINK;
+}
+
+function startMusic() {
+    if (!music.src) music.src = ASSETS.music;
+    music.volume = 0.9;
+    return music.play();
+}
+
+document.querySelectorAll(".logo").forEach((img) => {
+    img.src = ASSETS.logo;
+    img.onerror = () => {
+        console.error("Logo not found:", ASSETS.logo);
+    };
+});
+
+music.addEventListener("error", () => {
+    console.error("Music not found:", ASSETS.music);
+});
+
+let musicWasPlaying = false;
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        musicWasPlaying = !music.paused;
+        music.pause();
+        return;
+    }
+    if (musicWasPlaying) {
+        music.play().catch(() => {});
+    }
+});
+
+enterScreen.addEventListener("click", () => {
+    startMusic().catch(() => {});
+    enterScreen.classList.add("hide");
+    setTimeout(() => {
+        enterScreen.style.display = "none";
+    }, 500);
+});
+
+window.addEventListener("load", () => {
+    music.src = ASSETS.music;
+    music.load();
+    startMusic().catch(() => {});
+
+    buildCards();
+    loadDiscordProfiles();
+    setInterval(loadDiscordProfiles, 15000);
+});
+
+function renderMembers(members) {
+    return members.map(member => `
+        <a href="${member.link}" target="_blank" rel="noopener noreferrer" class="card loading" data-discord-id="${member.id}">
+            <div class="card-avatar-wrap">
+                <img class="card-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+                <img class="card-avatar-decoration" alt="">
+                <span class="status-dot offline"></span>
+            </div>
+            <p class="card-name">...</p>
+            <p class="card-status">...</p>
+        </a>
+    `).join("");
+}
+
+function buildCards() {
+    const grid1 = document.getElementById("cards-grid-1");
+    const grid2 = document.getElementById("cards-grid-2");
+    if (grid1) grid1.innerHTML = renderMembers(ULO_NG_DELUCA_MEMBERS);
+    if (grid2) grid2.innerHTML = renderMembers(XCLSV_MEMBERS);
+}
+
+function getDiscordAvatarUrl(user) {
+    if (user.avatarURL) return user.avatarURL.includes("?") ? user.avatarURL : user.avatarURL + "?size=256";
+    if (user.avatar && user.avatar.startsWith("http")) return user.avatar;
+    if (user.avatar) {
+        const ext = user.avatar.startsWith("a_") ? "gif" : "png";
+        return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
+    }
+    const index = Number((BigInt(user.id) >> 22n) % 6n);
+    return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+}
+
+function getAvatarDecorationUrl(user) {
+    const asset = user?.avatar_decoration_data?.asset;
+    if (!asset) return null;
+    return `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png?size=160`;
+}
+
+function applyAvatarDecoration(card, user) {
+    const deco = card.querySelector(".card-avatar-decoration");
+    if (!deco) return;
+    const url = getAvatarDecorationUrl(user);
+    if (!url) {
+        deco.removeAttribute("src");
+        deco.classList.remove("visible");
+        return;
+    }
+    deco.src = url;
+    deco.classList.add("visible");
+    deco.onerror = () => {
+        deco.onerror = null;
+        deco.removeAttribute("src");
+        deco.classList.remove("visible");
+    };
+}
+
+function normalizeDiscordStatus(status) {
+    if (status === "online" || status === "idle" || status === "dnd") return status;
+    return "offline";
+}
+
+function getCustomStatus(activities) {
+    if (!activities?.length) return null;
+    const custom = activities.find(a => a.type === 4);
+    if (!custom?.state && !custom?.emoji) return null;
+    return { text: custom.state || "", emoji: custom.emoji || null };
+}
+
+function renderCustomStatus(el, status) {
+    el.textContent = "";
+    el.classList.remove("empty");
+    if (!status?.text && !status?.emoji) {
+        el.classList.add("empty");
+        return;
+    }
+    if (status.emoji) {
+        if (status.emoji.id) {
+            const img = document.createElement("img");
+            img.src = `https://cdn.discordapp.com/emojis/${status.emoji.id}.${status.emoji.animated ? "gif" : "png"}?size=32`;
+            img.alt = status.emoji.name || "";
+            img.className = "status-emoji";
+            el.appendChild(img);
+        } else if (status.emoji.name) {
+            el.append(status.emoji.name + " ");
+        }
+    }
+    if (status.text) el.append(status.text);
+}
+
+function applyDiscordProfile(card, profile) {
+    const user = profile.user;
+    const avatar = card.querySelector(".card-avatar");
+    const name = card.querySelector(".card-name");
+    const statusEl = card.querySelector(".card-status");
+    const statusDot = card.querySelector(".status-dot");
+    const displayName = user.display_name || user.global_name || user.username;
+
+    avatar.src = getDiscordAvatarUrl(user);
+    avatar.alt = displayName;
+    applyAvatarDecoration(card, user);
+    name.textContent = displayName;
+    renderCustomStatus(statusEl, profile.customStatus);
+
+    if (statusDot) {
+        statusDot.className = "status-dot " + normalizeDiscordStatus(profile.discordStatus);
+    }
+
+    card.classList.remove("loading");
+}
+
+function presenceDataToProfile(data) {
+    if (!data?.discord_user) return null;
+    return {
+        user: data.discord_user,
+        discordStatus: normalizeDiscordStatus(data.discord_status),
+        customStatus: getCustomStatus(data.activities)
+    };
+}
+
+async function fetchJapiProfile(userId) {
+    try {
+        const res = await fetch(`https://japi.rest/discord/v1/user/${userId}`);
+        const json = await res.json();
+        if (!json.data?.id) return null;
+        const d = json.data;
+        return {
+            user: {
+                id: d.id,
+                username: d.username,
+                global_name: d.global_name,
+                display_name: d.global_name || d.username,
+                avatar: d.avatar,
+                avatarURL: d.avatarURL,
+                avatar_decoration_data: d.avatar_decoration_data || null
+            },
+            discordStatus: "offline",
+            customStatus: null
+        };
+    } catch (e) {
+        return null;
+    }
+}
+
+async function fetchDiscordProfile(userId) {
+    const data = await DiscordStatus.fetchUser(userId);
+    if (data) return presenceDataToProfile(data);
+    return fetchJapiProfile(userId);
+}
+
+async function loadDiscordProfiles() {
+    const cards = document.querySelectorAll(".card[data-discord-id]");
+    const ids = [...cards].map((c) => c.dataset.discordId).filter(Boolean);
+    const batch = await DiscordStatus.fetchUsers(ids);
+
+    for (const card of cards) {
+        const userId = card.dataset.discordId;
+        if (!userId) continue;
+
+        let profile = batch[userId] ? presenceDataToProfile(batch[userId]) : null;
+        if (!profile) profile = await fetchJapiProfile(userId);
+
+        if (profile) {
+            applyDiscordProfile(card, profile);
+        } else {
+            card.querySelector(".card-name").textContent = "Discord User";
+            card.querySelector(".card-status").classList.add("empty");
+            card.classList.remove("loading");
+        }
+    }
+}
+</script>
+<script>
+(function () {
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", function (e) {
+    var key = e.key ? e.key.toUpperCase() : "";
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && (key === "I" || key === "J" || key === "C")) ||
+      (e.ctrlKey && e.key && e.key.toLowerCase() === "u")
+    ) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

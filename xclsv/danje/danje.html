@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>indie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+@font-face {
+  font-family: "gg sans";
+  src: local("gg sans"), local("Noto Sans");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --discord-header: #f2f3f5;
+  --discord-subtext: #b5bac1;
+  --discord-muted: #949ba4;
+  --glass-bg: rgba(0, 0, 0, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "gg sans", "Inter", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #fff;
+  background: #000;
+  -webkit-font-smoothing: antialiased;
+}
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #000 center / cover no-repeat;
+}
+
+.background img,
+.background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: min(380px, 92vw);
+  padding: 34px 42px;
+  border-radius: 22px;
+  background: rgba(12, 12, 18, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  animation: fadeUp 0.8s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 104px;
+  height: 104px;
+}
+
+.avatar-wrap::before,
+.avatar-wrap::after {
+  content: none;
+}
+
+.avatar-wrap::before {
+  left: -38px;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+.avatar-wrap::after {
+  right: -38px;
+}
+
+.avatar {
+  position: relative;
+  z-index: 1;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 26px rgba(0, 0, 0, 0.45);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.avatar-decoration {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  display: none;
+}
+
+.avatar-decoration.visible {
+  display: block;
+}
+
+.status-dot {
+  z-index: 3;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(12, 12, 18, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-dot::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(12, 12, 18, 0.9);
+  background: var(--status-color, #f04747);
+}
+
+.status-dot.online { --status-color: #23a559; }
+.status-dot.idle { --status-color: #f0b232; }
+.status-dot.dnd { --status-color: #f04747; }
+.status-dot.offline { --status-color: #80848e; }
+
+.profile-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--discord-header);
+}
+
+.profile-name .badge {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.custom-status {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--discord-subtext);
+  max-width: 320px;
+  line-height: 1.35;
+  min-height: 1.3em;
+}
+
+.custom-status:not(:empty)::before { content: "\201C"; }
+.custom-status:not(:empty)::after { content: "\201D"; }
+
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 8px 14px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.social-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.social-links svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.view-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--discord-muted);
+  margin-top: 2px;
+}
+
+.view-count svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  opacity: 0.8;
+}
+
+#bgMusic {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .avatar-wrap::before, .avatar-wrap::after { display: none; }
+}
+
+#enter-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}
+
+#enter-screen.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#enter-screen .enter-logo {
+  width: min(650px, 85vw);
+  height: auto;
+  margin-bottom: 50px;
+  object-fit: contain;
+}
+
+#enter-screen .enter-text {
+  color: #fff;
+  font-size: 25px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+</style>
+</head>
+<body>
+
+<div id="enter-screen" aria-label="Click to enter">
+  <img class="enter-logo" id="enter-logo" src="../../logo/ChatGPT_Image_Apr_11__2026__10_43_25_PM-removebg-preview.png" alt="DELUCA" />
+  <div class="enter-text"> click to enter. </div>
+</div>
+
+<div class="background" id="background"></div>
+<div class="overlay"></div>
+
+<div class="content">
+  <div class="card">
+    <div class="profile">
+      <div class="avatar-wrap">
+        <img class="avatar" id="avatar" src="" alt="Avatar" />
+        <img class="avatar-decoration" id="avatar-decoration" alt="" />
+        <div class="status-dot offline" id="status-dot" title="Offline"></div>
+      </div>
+
+      <div class="profile-name">
+        <span id="display-name">indie7_77</span>
+        <span class="badge" id="badge">⭐</span>
+      </div>
+
+      <p class="custom-status" id="custom-status">danje</p>
+
+      <nav class="social-links" id="social-links" aria-label="Social media links"></nav>
+
+      <div class="view-count">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <span id="view-count">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<audio id="bgMusic" loop preload="auto"></audio>
+
+<script src="../../js/discord-status-client.js"></script>
+<script>
+/* ── Edit your profile here ── */
+const CONFIG = {
+  displayName: "indie7_77",
+  customStatus: "danje",
+  badge: "⭐",
+  avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
+  
+  discordUserId: "1382434087226179656",
+  backgroundGif: "../../gif/danje.gif",
+  social: {
+    discord: "", /* filled from discordUserId */
+    tiktok: "https://tiktok.com/@danje1139",
+    //youtube: "https://youtube.com/@NyxGaKING-e3j"
+  },
+  backgroundMusic: "../../music/danje.mp3",
+  musicVolume: 0.9
+};
+
+const ICONS = {
+  discord: '<svg viewBox="0 0 24 24"><path d="M20.3 4.4A17.2 17.2 0 0 0 15.5 3l-.2.4a15.8 15.8 0 0 0-6.2 0L9 3a17.2 17.2 0 0 0-4.8 1.4C2.5 8.2 1.8 11.9 2.1 15.5a17.4 17.4 0 0 0 5.3 2.7l1.3-2a10.7 10.7 0 0 1-2.1-1l.4-.2c4 1.9 8.4 1.9 12.3 0l.4.2c-.5.4-1.1.7-1.7 1l1.3 2a17.4 17.4 0 0 0 5.3-2.7c.5-5.2-.8-8.8-2.7-11.1ZM9 13.8c-1 0-1.8-1-1.8-2.1s.8-2.1 1.8-2.1 1.8 1 1.8 2.1-.8 2.1-1.8 2.1Zm6 0c-1 0-1.8-1-1.8-2.1s.8-2.1 1.8-2.1 1.8 1 1.8 2.1-.8 2.1-1.8 2.1Z"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24"><path d="M19.6 7.8a5.7 5.7 0 0 1-3.3-1.1v7.2a6.8 6.8 0 1 1-6.8-6.8c.3 0 .7 0 1 .1v3.1a3.7 3.7 0 1 0 2.6 3.5V2.2h3.1a3.7 3.7 0 0 0 3.4 3.4v2.2Z"/></svg>',
+  twitch: '<svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.281.186-.656.487-.906.787-.25.3-.437.637-.562 1.012-.125.375-.187.787-.187 1.225v14.706c0 .438.062.85.187 1.225.125.375.312.712.562 1.012.25.3.625.601.906.787 1.232.812 2.703 1.225 4.412 1.225s3.18-.413 4.412-1.225c.281-.186.656-.487.906-.787.25-.3.437-.637.562-1.012.125-.375.187-.787.187-1.225V4.637c0-.438-.062-.85-.187-1.225a2.25 2.25 0 0 0-.562-1.012 2.25 2.25 0 0 0-.906-.787C15.18.413 13.709 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>'
+};
+
+function setupBackground() {
+  const bg = document.getElementById("background");
+  if (!CONFIG.backgroundGif) return;
+  const img = document.createElement("img");
+  img.src = CONFIG.backgroundGif;
+  img.alt = "";
+  img.onerror = () => {
+    console.error("Background GIF not found:", CONFIG.backgroundGif);
+  };
+  bg.appendChild(img);
+}
+
+function setupSocial() {
+  const discordId = getDiscordId();
+  if (discordId && !CONFIG.social.discord) {
+    CONFIG.social.discord = `https://discord.com/users/${discordId}`;
+  }
+  const nav = document.getElementById("social-links");
+  Object.entries(CONFIG.social).forEach(([platform, url]) => {
+    if (!url || !ICONS[platform]) return;
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.title = platform;
+    a.innerHTML = ICONS[platform];
+    nav.appendChild(a);
+  });
+}
+
+function applyProfile() {
+  document.getElementById("display-name").textContent = CONFIG.displayName;
+  document.getElementById("custom-status").textContent = CONFIG.customStatus;
+  document.getElementById("badge").textContent = CONFIG.badge;
+  document.getElementById("avatar").src = CONFIG.avatarUrl;
+}
+
+function getDiscordId() {
+  const params = new URLSearchParams(location.search);
+  return params.get("id") || CONFIG.discordUserId;
+}
+
+function setAvatar(src) {
+  if (!src) return;
+  const img = document.getElementById("avatar");
+  img.src = src;
+  img.onerror = () => {
+    img.onerror = null;
+    if (CONFIG.avatarUrl) img.src = CONFIG.avatarUrl;
+  };
+}
+
+function avatarFromUser(user) {
+  if (!user?.id) return CONFIG.avatarUrl;
+  if (user.avatarURL) return user.avatarURL;
+  if (user.avatar) {
+    const ext = user.avatar.startsWith("a_") ? "gif" : "png";
+    return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
+  }
+  const idx = Number((BigInt(user.id) >> 22n) % 6n);
+  return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
+}
+
+function getAvatarDecorationUrl(user) {
+  const asset = user?.avatar_decoration_data?.asset;
+  if (!asset) return null;
+  return `https://cdn.discordapp.com/avatar-decoration-presets/${asset}.png?size=240`;
+}
+
+function setAvatarDecoration(user) {
+  const el = document.getElementById("avatar-decoration");
+  if (!el) return;
+  const url = getAvatarDecorationUrl(user);
+  if (!url) {
+    el.removeAttribute("src");
+    el.classList.remove("visible");
+    return;
+  }
+  el.src = url;
+  el.classList.add("visible");
+  el.onerror = () => {
+    el.onerror = null;
+    el.removeAttribute("src");
+    el.classList.remove("visible");
+  };
+}
+
+function normalizeDiscordStatus(status) {
+  if (status === "online" || status === "idle" || status === "dnd") return status;
+  return "offline";
+}
+
+function setStatusDot(status) {
+  const dot = document.getElementById("status-dot");
+  if (!dot) return;
+  const s = normalizeDiscordStatus(status);
+  dot.className = `status-dot ${s}`;
+  dot.title = s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function applyCustomStatusFromActivities(activities) {
+  const el = document.getElementById("custom-status");
+  if (!el) return;
+  const custom = (activities || []).find((a) => a.type === 4);
+  if (!custom?.state && !custom?.emoji) return;
+  let text = "";
+  if (custom.emoji?.name) text += custom.emoji.name + " ";
+  if (custom.state) text += custom.state;
+  if (text.trim()) el.textContent = text.trim();
+}
+
+function applyDiscordData(data) {
+  const user = data.discord_user;
+  if (user) {
+    document.getElementById("display-name").textContent =
+      user.global_name || user.display_name || user.username;
+    setAvatar(avatarFromUser(user));
+    setAvatarDecoration(user);
+  }
+
+  applyCustomStatusFromActivities(data.activities);
+  setStatusDot(data.discord_status);
+}
+
+async function fetchJapi(discordId) {
+  const res = await fetch(`https://japi.rest/discord/v1/user/${discordId}`);
+  if (!res.ok) return null;
+  const json = await res.json();
+  const d = json.data;
+  if (!d?.id) return null;
+
+  return {
+    discord_user: {
+      id: d.id,
+      username: d.username,
+      global_name: d.global_name,
+      display_name: d.global_name,
+      avatar: d.avatar,
+      avatarURL: d.avatarURL,
+      avatar_decoration_data: d.avatar_decoration_data || null,
+      discriminator: d.discriminator || "0",
+    },
+    discord_status: "offline",
+    activities: [],
+  };
+}
+
+async function loadDiscord() {
+  const discordId = getDiscordId();
+  if (!discordId) return;
+
+  try {
+    let data = await DiscordStatus.fetchUser(discordId);
+    if (!data) {
+      data = await fetchJapi(discordId);
+      if (!data) {
+        console.warn("Live status: be in DeLuca Discord + run START-STATUS-SERVER.bat");
+        setAvatar(CONFIG.avatarUrl);
+        setStatusDot("offline");
+        return;
+      }
+    }
+    applyDiscordData(data);
+  } catch (err) {
+    console.warn("Discord profile fetch failed:", err);
+    setAvatar(CONFIG.avatarUrl);
+    setStatusDot("offline");
+  }
+}
+
+const views = parseInt(localStorage.getItem("star_views") || "0", 10) + 1;
+localStorage.setItem("star_views", views);
+document.getElementById("view-count").textContent = views;
+
+const bgMusic = document.getElementById("bgMusic");
+
+function startBackgroundMusic() {
+  if (!CONFIG.backgroundMusic) return;
+  bgMusic.src = CONFIG.backgroundMusic;
+  bgMusic.volume = CONFIG.musicVolume;
+  bgMusic.load();
+  return bgMusic.play();
+}
+
+bgMusic.addEventListener("error", () => {
+  console.error("Background music not found:", CONFIG.backgroundMusic);
+});
+
+const enterScreen = document.getElementById("enter-screen");
+enterScreen.addEventListener("click", () => {
+  startBackgroundMusic().catch(() => {});
+  enterScreen.classList.add("hide");
+  setTimeout(() => {
+    enterScreen.style.display = "none";
+  }, 500);
+});
+
+applyProfile();
+setupBackground();
+setupSocial();
+loadDiscord();
+setInterval(function () { loadDiscord().catch(function () {}); }, 15000);
+</script>
+<script>
+(function () {
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  });
+  document.addEventListener("keydown", function (e) {
+    var key = e.key ? e.key.toUpperCase() : "";
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && (key === "I" || key === "J" || key === "C")) ||
+      (e.ctrlKey && e.key && e.key.toLowerCase() === "u")
+    ) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+</body>
+</html>
