@@ -94,6 +94,49 @@ html, body {
 .card-wrap {
   position: relative;
   width: min(380px, 92vw);
+  overflow: visible;
+}
+
+.card-frame {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Krus orbit (positioned via JS + SVG path) */
+.krus-orbit {
+  position: absolute;
+  inset: -14px;
+  z-index: 4;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.krus-path-svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.krus-orbit .krus-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--krus-size, 56px);
+  height: var(--krus-size, 56px);
+  will-change: transform;
+}
+
+.krus-orbit .krus-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9));
 }
 
 .card-sit-gif {
@@ -122,15 +165,26 @@ html, body {
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
-/* Neon border glow */
+/* RGB cycling neon border */
 .card::before {
   content: "";
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-  background: linear-gradient(90deg, #ff2bd6, #7c3aed, #00e5ff, #ff2bd6);
-  background-size: 300% 100%;
-  padding: 2px; /* border thickness */
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #8b00ff,
+    #ff00ff,
+    #ff0000
+  );
+  background-size: 400% 100%;
+  padding: 2px;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -138,7 +192,7 @@ html, body {
   opacity: 0.95;
   z-index: 1;
   pointer-events: none;
-  animation: neonShift 5s linear infinite;
+  animation: rgbBorder 4s linear infinite;
 }
 
 .card::after {
@@ -149,21 +203,22 @@ html, body {
   pointer-events: none;
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-    0 0 16px rgba(0, 229, 255, 0.22),
-    0 0 34px rgba(255, 43, 214, 0.18);
+    0 0 18px rgba(255, 43, 214, 0.25),
+    0 0 28px rgba(0, 229, 255, 0.22),
+    0 0 36px rgba(124, 58, 237, 0.18);
   opacity: 0.75;
   z-index: 0;
   animation: neonPulse 2.8s ease-in-out infinite;
 }
 
-@keyframes neonShift {
+@keyframes rgbBorder {
   0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+  100% { background-position: 400% 50%; }
 }
 
 @keyframes neonPulse {
   0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.85; }
 }
 
 .profile {
@@ -394,6 +449,8 @@ html, body {
 <div class="content">
   <div class="card-wrap">
     <img class="card-sit-gif" id="sit-gif" src="../gif/star-sit.gif" alt="" />
+    <div class="card-frame">
+    <div class="krus-orbit" id="krus-orbit" aria-hidden="true"></div>
     <div class="card">
     <div class="profile">
       <div class="avatar-wrap">
@@ -415,6 +472,7 @@ html, body {
         <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         <span id="view-count">0</span>
       </div>
+    </div>
     </div>
     </div>
   </div>
@@ -644,8 +702,8 @@ async function loadDiscord() {
   }
 }
 
-const views = parseInt(localStorage.getItem("star_views") || "0", 10) + 1;
-localStorage.setItem("star_views", views);
+const views = parseInt(localStorage.getItem("smookey_views") || "0", 10) + 1;
+localStorage.setItem("smookey_views", views);
 document.getElementById("view-count").textContent = views;
 
 const bgMusic = document.getElementById("bgMusic");
@@ -668,12 +726,109 @@ enterScreen.addEventListener("click", () => {
   enterScreen.classList.add("hide");
   setTimeout(() => {
     enterScreen.style.display = "none";
+    window.dispatchEvent(new Event("resize"));
   }, 500);
 });
+
+function roundedRectPath(w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  return [
+    `M ${r} 0`,
+    `H ${w - r}`,
+    `A ${r} ${r} 0 0 1 ${w} ${r}`,
+    `V ${h - r}`,
+    `A ${r} ${r} 0 0 1 ${w - r} ${h}`,
+    `H ${r}`,
+    `A ${r} ${r} 0 0 1 0 ${h - r}`,
+    `V ${r}`,
+    `A ${r} ${r} 0 0 1 ${r} 0`,
+    "Z"
+  ].join(" ");
+}
+
+function setupKrusOrbit() {
+  const orbit = document.getElementById("krus-orbit");
+  const card = document.querySelector(".card-frame .card");
+  if (!orbit || !card) return;
+
+  const KRUS_COUNT = 40;
+  const ORBIT_MS = 48000;
+  const KRUS_SIZE = 56;
+  const SPIN_MS = 6500;
+
+  orbit.style.setProperty("--krus-size", KRUS_SIZE + "px");
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "krus-path-svg");
+  svg.setAttribute("aria-hidden", "true");
+  const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  pathEl.setAttribute("fill", "none");
+  svg.appendChild(pathEl);
+
+  orbit.replaceChildren(svg);
+  const items = [];
+
+  for (let i = 0; i < KRUS_COUNT; i++) {
+    const item = document.createElement("div");
+    item.className = "krus-item";
+    const img = document.createElement("img");
+    img.src = "../logo/krus.png";
+    img.alt = "";
+    img.draggable = false;
+    item.appendChild(img);
+    orbit.appendChild(item);
+    items.push(item);
+  }
+
+  let pathLength = 0;
+  let rafId = 0;
+
+  function updateOrbitPath() {
+    const w = orbit.clientWidth;
+    const h = orbit.clientHeight;
+    if (!w || !h) return;
+    const cardBr = parseFloat(getComputedStyle(card).borderRadius) || 22;
+    const br = cardBr + 14;
+    const d = roundedRectPath(w, h, br);
+    pathEl.setAttribute("d", d);
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    pathLength = pathEl.getTotalLength() || 0;
+  }
+
+  function tick(now) {
+    if (!pathLength) {
+      rafId = requestAnimationFrame(tick);
+      return;
+    }
+    const half = KRUS_SIZE / 2;
+    const orbitT = (now % ORBIT_MS) / ORBIT_MS;
+    const spinDeg = ((now % SPIN_MS) / SPIN_MS) * 360;
+
+    for (let i = 0; i < items.length; i++) {
+      const dist = ((orbitT + i / KRUS_COUNT) % 1) * pathLength;
+      const pt = pathEl.getPointAtLength(dist);
+      items[i].style.transform =
+        "translate3d(" + (pt.x - half) + "px," + (pt.y - half) + "px,0) rotate(" + spinDeg + "deg)";
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  updateOrbitPath();
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(tick);
+
+  if (typeof ResizeObserver !== "undefined") {
+    const ro = new ResizeObserver(updateOrbitPath);
+    ro.observe(card);
+    ro.observe(orbit);
+  }
+  window.addEventListener("resize", updateOrbitPath);
+}
 
 applyProfile();
 setupBackground();
 setupSittingGif();
+setupKrusOrbit();
 setupSocial();
 loadDiscord();
 setInterval(function () { loadDiscord().catch(function () {}); }, 15000);
