@@ -476,6 +476,42 @@ audio {
     min-width: 90px;
     min-height: 1.1em;
 }
+
+/* ========== MEMBERS CAROUSEL (HORIZONTAL LOOP) ========== */
+
+.members-section .cards-wrapper {
+    max-width: 100%;
+}
+
+.members-carousel {
+    width: 100%;
+    overflow: hidden;
+    padding: 4px 0;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.members-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: members-scroll var(--members-scroll-duration, 42s) linear infinite;
+    will-change: transform;
+}
+
+.members-track .card {
+    flex: 0 0 200px;
+    width: 200px;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    touch-action: manipulation;
+}
+
+@keyframes members-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--members-loop-distance, 1540px))); }
+}
 </style>
 </head>
 
@@ -507,6 +543,15 @@ audio {
     <div class="cards-wrapper">
         <div class="text">XCLSV</div>
         <div class="cards-grid xclsv-grid" id="cards-grid-2"></div>
+    </div>
+</section>
+
+<section class="page cards-section members-section">
+    <div class="cards-wrapper">
+        <div class="text">TRUSTED</div>
+        <div class="members-carousel">
+            <div class="members-track" id="members-track"></div>
+        </div>
     </div>
 </section>
 
@@ -577,6 +622,16 @@ const XCLSV_MEMBERS = [
      { id: "1485523311684354148", link: "jay/" },
      { id: "803232959116083260", link: "james/" }
 ];
+
+const MEMBERS = [
+    { id: "1143814351799730268", link: "migz/" },
+    { id: "1405831623546503218", link: "alas/" },
+    { id: "1368017455573766278", link: "kirk/" },
+    { id: "1269523187050479739", link: "steezy/" },
+    { id: "653043074540503060", link: "tony/" },
+    { id: "1444919251122262039", link: "burst/" },
+    { id: "1406635617084899420", link: "jc/" }
+];
 // ============================================================
 
 const ASSETS = {
@@ -643,18 +698,71 @@ window.addEventListener("load", () => {
     setInterval(loadDiscordProfiles, 15000);
 });
 
-function renderMembers(members) {
-    return members.map(member => `
-        <a href="${member.link}" target="_blank" rel="noopener noreferrer" class="card loading" data-discord-id="${member.id}">
+function normalizeProfileLink(link) {
+    if (!link || link === "#") return "#";
+    if (/^https?:\/\//i.test(link)) return link;
+    const path = link.replace(/^\.\//, "").replace(/\/+$/, "");
+    if (!path) return "#";
+    if (/\.html?$/i.test(path)) return path;
+    return `${path}/index.html`;
+}
+
+function renderMemberCard(member, index = 0) {
+    const isPlaceholder = !member.id;
+    const cardClass = isPlaceholder ? "card" : "card loading";
+    const discordAttr = member.id ? ` data-discord-id="${member.id}"` : "";
+    const avatarIndex = member.avatarIndex ?? index % 6;
+    const displayName = isPlaceholder ? member.name : "...";
+    const nameClass = "card-name";
+    const statusHtml = isPlaceholder
+        ? '<p class="card-status empty"></p>'
+        : '<p class="card-status">...</p>';
+    const href = normalizeProfileLink(member.link);
+
+    return `
+        <a href="${href}" target="_blank" rel="noopener noreferrer" class="${cardClass}"${discordAttr}>
             <div class="card-avatar-wrap">
-                <img class="card-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+                <img class="card-avatar" src="https://cdn.discordapp.com/embed/avatars/${avatarIndex}.png" alt="">
                 <img class="card-avatar-decoration" alt="">
                 <span class="status-dot offline"></span>
             </div>
-            <p class="card-name">...</p>
-            <p class="card-status">...</p>
+            <p class="${nameClass}">${displayName}</p>
+            ${statusHtml}
         </a>
-    `).join("");
+    `;
+}
+
+function renderMembers(members) {
+    return members.map((member, index) => renderMemberCard(member, index)).join("");
+}
+
+function setupMembersCarousel() {
+    const membersTrack = document.getElementById("members-track");
+    const carousel = membersTrack?.closest(".members-carousel");
+    if (!membersTrack || !carousel) return;
+
+    const cardsHtml = renderMembers(MEMBERS);
+    const setSize = MEMBERS.length;
+    let sets = 2;
+
+    membersTrack.innerHTML = cardsHtml.repeat(sets);
+
+    const cards = membersTrack.querySelectorAll(".card");
+    if (cards.length < setSize * 2) return;
+
+    const loopDistance = cards[setSize].offsetLeft;
+    const requiredWidth = loopDistance + carousel.clientWidth;
+
+    while (membersTrack.scrollWidth < requiredWidth) {
+        sets += 1;
+        membersTrack.innerHTML = cardsHtml.repeat(sets);
+    }
+
+    const scrollDuration = Math.max(28, loopDistance / 36.5);
+    membersTrack.style.setProperty("--members-loop-distance", `${loopDistance}px`);
+    membersTrack.style.setProperty("--members-scroll-duration", `${scrollDuration}s`);
+
+    loadDiscordProfiles();
 }
 
 function buildCards() {
@@ -662,7 +770,14 @@ function buildCards() {
     const grid2 = document.getElementById("cards-grid-2");
     if (grid1) grid1.innerHTML = renderMembers(ULO_NG_DELUCA_MEMBERS);
     if (grid2) grid2.innerHTML = renderMembers(XCLSV_MEMBERS);
+    setupMembersCarousel();
 }
+
+let membersResizeTimer;
+window.addEventListener("resize", () => {
+    clearTimeout(membersResizeTimer);
+    membersResizeTimer = setTimeout(setupMembersCarousel, 150);
+});
 
 function getDiscordAvatarUrl(user) {
     if (user.avatarURL) return user.avatarURL.includes("?") ? user.avatarURL : user.avatarURL + "?size=256";
