@@ -701,10 +701,13 @@ window.addEventListener("load", () => {
 function normalizeProfileLink(link) {
     if (!link || link === "#") return "#";
     if (/^https?:\/\//i.test(link)) return link;
-    const path = link.replace(/^\.\//, "").replace(/\/+$/, "");
+    let path = link.replace(/^\.\//, "").replace(/\/+$/, "");
     if (!path) return "#";
-    if (/\.html?$/i.test(path)) return path;
-    return `${path}/index.html`;
+    path = path.replace(/\/index\.html?$/i, "");
+    if (window.location.protocol === "file:") {
+        return `${path}/index.html`;
+    }
+    return path;
 }
 
 function renderMemberCard(member, index = 0) {
